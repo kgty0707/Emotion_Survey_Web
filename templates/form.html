@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "movie.html" as movie %}
 
 {% block content %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -60,11 +61,9 @@
             return;
         }
 
-        if (startTime === null) {
-            startTime = Date.now();
-        }
-        nextTimes.push(Date.now() - startTime);
-        console.log("Next 버튼 클릭 시간 (ms):", nextTimes);
+        const timestampKST = getKSTTime();
+        nextTimes.push(timestampKST);
+        console.log("Next 버튼 클릭 시간 (KST):", nextTimes);
 
         // ✅ 특정 페이지 목록(blackScreenPages)에 포함된 경우 검정 화면 실행
         if (blackScreenPages.has(currentPage)) {
@@ -168,7 +167,7 @@
         <div class="form-page" style="display: none;">
             <h4>감정 평가</h4>
             <p>설문지{{ loop.index }}</p>
-            {% include "movie.html" %}
+            {{ movie.render_movie_form(loop.index) }}
         </div>
         {% endfor %}
     </div>

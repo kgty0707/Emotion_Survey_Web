@@ -49,6 +49,35 @@
     <!-- Global Javascript Bundle -->
     <script src="/static/assets/js/core.min.js"></script>
     <script src="/static/assets/js/vendor_bundle.min.js"></script>
+    <script>
+        function getKSTTime() {
+            let now = new Date();
+            let kstOffset = 9 * 60 * 60 * 1000; // UTC+9 (KST)
+            let kstTime = new Date(now.getTime() + kstOffset);
+            return kstTime.toISOString().slice(0, 19).replace("T", " ");
+        }
+    
+        document.querySelectorAll(".startBtn").forEach(button => {
+            button.addEventListener("click", function () {
+                let index = this.getAttribute("data-index");
+                console.log(`시작 버튼 클릭: ${index}`);
+                let startTime = getKSTTime();
+                document.getElementById(`startTimeDisplay_${index}`).textContent = startTime;
+                document.getElementById(`startTimeInput_${index}`).value = startTime;
+                document.querySelector(`.stopBtn[data-index="${index}"]`).disabled = false; // 해당 index의 종료 버튼 활성화
+            });
+        });
+
+        document.querySelectorAll(".stopBtn").forEach(button => {
+            button.addEventListener("click", function () {
+                let index = this.getAttribute("data-index");
+                let stopTime = getKSTTime();
+                document.getElementById(`stopTimeDisplay_${index}`).textContent = stopTime;
+                document.getElementById(`stopTimeInput_${index}`).value = stopTime;
+                this.disabled = true; // 해당 index의 종료 버튼 비활성화
+            });
+        });
+    </script>
 </body>
 <!--end::Body-->
 
