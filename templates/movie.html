@@ -1,141 +1,133 @@
-{% extends "form.html" %}
-
-{% block header %}Movie1{% endblock %}
-
-{% block content %}
-<div class="video-container">
-    {% for video in videos %}
-    <div class="ratio ratio-16x9">
-        <iframe class="embed-responsive-item" src="{{ video }}" width="560" height="315" allowfullscreen>
-        </iframe>
+<!-- <div class="m-5">
+    <p><strong>* 이 장면을 이전에 본 적이 있습니까?</strong></p>
+    <div class="d-flex">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="seen_before_{{ loop.index }}"
+                id="seen_yes_{{ loop.index }}" value="yes" required>
+            <label class="form-check-label" for="seen_yes_{{ loop.index }}">예</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="seen_before_{{ loop.index }}"
+                id="seen_no_{{ loop.index }}" value="no" required>
+            <label class="form-check-label" for="seen_no_{{ loop.index }}">아니오</label>
+        </div>
     </div>
-    <form>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">inline 1</label>
+</div> -->
+
+{% set additional_questions = [
+"이 영화를 보고난 후 현재 기분이 즐겁고 행복하다. (1-불쾌하다, 9-즐겁다)",
+"이 영화를 보고난 후 흥분(Excited)되거나 긴장되었다. (1-차분하다, 9-흥분되었다)",
+] %}
+
+{% for j in range(additional_questions|length) %}
+<div class="m-5">
+    <p><strong>{{ j+1 }}. {{ additional_questions[j] }}</strong></p>
+    <div class="d-flex flex-wrap gap-2">
+        {% for i in range(1, 10) %}
+        <div class="form-check form-check-inline" style="min-width: 3rem;">
+            <input class="form-check-input" type="radio" name="extra_scale_{{ loop.index }}_{{ j }}"
+                id="extra_{{ loop.index }}_{{ j }}_{{ i }}" value="{{ i }}" required>
+            <label class="form-check-label text-center w-100" for="extra_{{ loop.index }}_{{ j }}_{{ i }}">{{
+                i }}</label>
         </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">inline 2</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">inline 1</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">inline 2</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">inline 1</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">inline 2</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">inline 1</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">inline 2</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">inline 1</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">inline 2</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input form-check-input-primary" type="radio" name="inlineRadioOptions"
-                id="inlineRadio3" value="option3" disabled>
-            <label class="form-check-label" for="inlineRadio3">inline 3 (disabled)</label>
-        </div>
-    </form>
-    {% endfor %}
+        {% endfor %}
+    </div>
 </div>
-{% endblock %}
+{% endfor %}
+
+<!-- 감정 선택 -->
+<div class="m-5">
+    <p><strong>4. 영화를 보고난 후 느껴지는 감정을 잘 설명하는 단어를 골라주세요.</strong></p>
+    <select class="form-select form-select-sm" name="emotion_{{ loop.index }}" required> <!-- ✅ 영화별로 구분 -->
+        <option selected disabled>감정을 선택하세요</option>
+        <option value="놀람">놀람 (Astonishment)</option>
+        <option value="기쁨">기쁨 (Delight)</option>
+        <option value="행복">행복 (Happiness)</option>
+        <option value="두려움">두려움 (Fear)</option>
+        <option value="짜증">짜증 (Annoyance)</option>
+        <option value="좌절">좌절 (Frustration)</option>
+        <option value="슬픔">슬픔 (Sadness)</option>
+        <option value="우울">우울 (Depression)</option>
+        <option value="피로">피로 (Tiredness)</option>
+        <option value="즐거움">즐거움 (Pleasure)</option>
+        <option value="만족">만족 (Contentment)</option>
+        <option value="평온">평온 (Calmness)</option>
+        <option value="졸림">졸림 (Sleepiness)</option>
+        <option value="해당 없음">해당하는 감정이 없음 (None of These)</option>
+    </select>
+</div>
+
+<!-- 추가 질문 1 -->
+<div class="m-5">
+    <label class="form-label"><strong>6. 손을 사용하여 감정을 표현하는 것이 자연스럽다고 느꼈나요?</strong></label>
+    <div class="d-flex flex-wrap gap-2">
+        {% for i in range(1, 10) %}
+        <div class="form-check form-check-inline" style="min-width: 3rem;">
+            <input class="form-check-input" type="radio" name="gesture_natural_{{ loop.index }}"
+                id="gesture_natural_{{ loop.index }}_{{ i }}" value="{{ i }}" required>
+            <label class="form-check-label text-center w-100" for="gesture_natural_{{ loop.index }}_{{ i }}">{{ i
+                }}</label>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 추가 질문 2 -->
+<div class="m-5">
+    <label class="form-label"><strong>7. 손으로 표현하기 어려운 감정이 있었나요?</strong></label>
+    <div class="d-flex flex-wrap gap-2">
+        {% for i in range(1, 10) %}
+        <div class="form-check form-check-inline" style="min-width: 3rem;">
+            <input class="form-check-input" type="radio" name="difficult_emotion_{{ loop.index }}"
+                id="difficult_emotion_{{ loop.index }}_{{ i }}" value="{{ i }}" required>
+            <label class="form-check-label text-center w-100" for="difficult_emotion_{{ loop.index }}_{{ i }}">{{ i
+                }}</label>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 추가 질문 3 -->
+<div class="m-5">
+    <label class="form-label"><strong>8. 손으로 감정을 표현할 때, 본인이 의도한 감정이 제대로 전달되었다고 생각하나요?</strong></label>
+    <div class="d-flex flex-wrap gap-2">
+        {% for i in range(1, 10) %}
+        <div class="form-check form-check-inline" style="min-width: 3rem;">
+            <input class="form-check-input" type="radio" name="emotion_conveyed_{{ loop.index }}"
+                id="emotion_conveyed_{{ loop.index }}_{{ i }}" value="{{ i }}" required>
+            <label class="form-check-label text-center w-100" for="emotion_conveyed_{{ loop.index }}_{{ i }}">{{ i
+                }}</label>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<script>
+    function getKSTTime() {
+        let now = new Date();
+        let kstOffset = 9 * 60 * 60 * 1000; // UTC+9 (KST)
+        let kstTime = new Date(now.getTime() + kstOffset);
+        return kstTime.toISOString().slice(0, 19).replace("T", " ");
+    }
+
+    document.querySelectorAll(".startBtn").forEach(button => {
+        button.addEventListener("click", function () {
+            let index = this.getAttribute("data-index");
+            let startTime = getKSTTime();
+            document.getElementById(`startTimeDisplay_${index}`).textContent = startTime;
+            document.getElementById(`startTimeInput_${index}`).value = startTime;
+            document.querySelector(`.stopBtn[data-index="${index}"]`).disabled = false; // 해당 index의 종료 버튼 활성화
+        });
+    });
+
+    document.querySelectorAll(".stopBtn").forEach(button => {
+        button.addEventListener("click", function () {
+            let index = this.getAttribute("data-index");
+            let stopTime = getKSTTime();
+            document.getElementById(`stopTimeDisplay_${index}`).textContent = stopTime;
+            document.getElementById(`stopTimeInput_${index}`).value = stopTime;
+            this.disabled = true; // 해당 index의 종료 버튼 비활성화
+        });
+    });
+</script>

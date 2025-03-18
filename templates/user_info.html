@@ -1,1 +1,140 @@
-<!-- 이름, 성별, 출생년도, 영화 취향-->
+<!-- 이름 입력 -->
+<div class="m-5">
+    <label for="name" class="form-label"><strong>이름</strong></label>
+    <input type="text" class="form-control" id="name" name="name" placeholder="이름을 입력하세요" required>
+</div>
+
+<!-- 성별 선택 -->
+<div class="m-5">
+    <label class="form-label"><strong>성별</strong></label>
+    <div class="d-flex">
+        <div class="form-check me-3">
+            <input class="form-check-input" type="radio" name="gender" id="male" value="male" required>
+            <label class="form-check-label" for="male">남성</label>
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input" type="radio" name="gender" id="female" value="female" required>
+            <label class="form-check-label" for="female">여성</label>
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input" type="radio" name="gender" id="others" value="others" required>
+            <label class="form-check-label" for="others">기타</label>
+        </div>
+    </div>
+</div>
+
+<!-- 출생년도 입력 -->
+<div class="m-5">
+    <label for="birth_year" class="form-label"><strong>출생년도</strong></label>
+    <input type="date" class="form-control" id="birth_year" name="birth_year" max="2024-12-31" required>
+</div>
+
+<!-- 영화 취향 (다중 선택 가능) -->
+<div class="m-5">
+    <label class="form-label"><strong>선호하는 영화 장르</strong> <small class="text-muted">(다중 선택 가능, 최소 1개 필수)</small></label>
+    <div class="list-group">
+        {% set genres = ["액션", "드라마", "코미디", "로맨스", "스릴러", "공포", "SF", "판타지", "다큐멘터리"] %}
+        {% for genre in genres %}
+        <label class="list-group-item d-flex align-items-center">
+            <input class="form-check-input me-2 genre-checkbox" type="checkbox" name="movie_genre" value="{{ genre }}">
+            {{ genre }}
+        </label>
+        {% endfor %}
+
+        <!-- "Other" 옵션 -->
+        <label class="list-group-item d-flex align-items-center">
+            <input class="form-check-input me-2" type="checkbox" name="movie_genre" value="Other" id="other_checkbox">
+            기타 (직접 입력)
+        </label>
+        <input type="text" class="form-control mt-2" id="other_input" name="other_genre" placeholder="기타 장르 입력"
+            style="display: none;" disabled>
+    </div>
+</div>
+
+<!-- 현재 감정 상태 -->
+<div class="m-5">
+    <label class="form-label"><strong>나는 현재 기분이 즐겁고 행복하다.</strong> <small>(1-불쾌하다, 9-즐겁다)</small></label>
+    <div class="d-flex flex-wrap gap-2">
+        {% for i in range(1, 10) %}
+        <div class="form-check form-check-inline" style="min-width: 3rem;">
+            <input class="form-check-input" type="radio" name="extra_scale_1" id="extra_1_{{ i }}" value="{{ i }}"
+                required>
+            <label class="form-check-label text-center w-100" for="extra_1_{{ i }}">{{ i }}</label>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="m-5">
+    <label class="form-label"><strong>나는 현재 흥분(Excited)되거나 긴장되었다.</strong> <small>(1-차분하다, 9-흥분되었다)</small></label>
+    <div class="d-flex flex-wrap gap-2">
+        {% for i in range(1, 10) %}
+        <div class="form-check form-check-inline" style="min-width: 3rem;">
+            <input class="form-check-input" type="radio" name="extra_scale_2" id="extra_2_{{ i }}" value="{{ i }}"
+                required>
+            <label class="form-check-label text-center w-100" for="extra_2_{{ i }}">{{ i }}</label>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 정신에 영향을 미칠 만한 약물 복용 여부 -->
+<div class="m-5">
+    <label class="form-label"><strong>정신에 영향을 미칠 만한 약물 복용 여부(5시간 이내)</strong> <small>(예: 카페인, 수면제 등)</small></label>
+    <div class="d-flex">
+        <div class="form-check me-3">
+            <input class="form-check-input" type="radio" name="medication" id="med_yes" value="yes">
+            <label class="form-check-label" for="med_yes">있음</label>
+        </div>
+        <div class="form-check me-3">
+            <input class="form-check-input" type="radio" name="medication" id="med_no" value="no">
+            <label class="form-check-label" for="med_no">없음</label>
+        </div>
+    </div>
+    <input type="text" class="form-control mt-2" id="med_details" name="med_details"
+        placeholder="해당하는 경우 약물명을 입력하세요 (예: 카페인, 수면제 등)" style="display: none;" disabled>
+</div>
+
+
+<script>
+    document.getElementById("other_checkbox").addEventListener("change", function () {
+        var otherInput = document.getElementById("other_input");
+        otherInput.style.display = this.checked ? "block" : "none";
+        otherInput.disabled = !this.checked;
+        if (!this.checked) {
+            otherInput.value = "";
+        }
+    });
+
+    // 약물 복용 여부 선택 시 입력 필드 활성화
+    document.querySelectorAll('input[name="medication"]').forEach((radio) => {
+        radio.addEventListener("change", function () {
+            var medInput = document.getElementById("med_details");
+            medInput.style.display = this.value === "yes" ? "block" : "none";
+            medInput.disabled = this.value !== "yes";
+            if (this.value !== "yes") {
+                medInput.value = "";
+            }
+        });
+    });
+
+    function validateUserInfo() {
+        let checkboxes = document.querySelectorAll('.genre-checkbox');
+        let checked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+        if (!checked) {
+            alert("적어도 하나의 영화 장르를 선택해야 합니다.");
+            return false;
+        }
+
+        let genderRadios = document.querySelectorAll('input[name="gender"]');
+        let genderChecked = Array.from(genderRadios).some(radio => radio.checked);
+
+        if (!genderChecked) {
+            alert("성별을 선택해야 합니다.");
+            return false;
+        }
+
+        return true;
+    }
+</script>

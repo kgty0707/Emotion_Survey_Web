@@ -6,17 +6,17 @@ import mimetypes
 
 def create_app():
     app = FastAPI()
-    
+
     mimetypes.init()
     mimetypes.add_type("application/javascript", ".js", strict=True)
-    
+
     BASE_DIR = Path(__file__).parent.resolve()
     static_dir = BASE_DIR / "static"
-    
+
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
-    
+
     register(app, 'app.routes.main')
-    
+
     return app
 
 if __name__ == '__main__':

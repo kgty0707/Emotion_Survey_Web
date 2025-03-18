@@ -4,98 +4,192 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <script>
     let currentPage = 1;
-    const totalPages = 5; // 총 페이지 수 설정
+    const totalPages = 21; // 페이지 수 조정
+    let startTime = null;
+    let nextTimes = [];
+    const blackScreenPages = new Set([3, 5, 7, 9, 11, 13, 15, 17, 19]); // ✅ 검정 화면이 나타날 특정 페이지 번호 설정
 
     function showPage(page) {
         document.querySelectorAll('.form-page').forEach((form, index) => {
             form.style.display = (index + 1 === page) ? 'block' : 'none';
         });
+
         document.getElementById('page-indicator').textContent = `${page} / ${totalPages}`;
         document.getElementById('prev-btn').classList.toggle('disabled', page === 1);
-        document.getElementById('next-btn').classList.toggle('disabled', page === totalPages);
+
+        const nextBtn = document.getElementById('next-btn');
+        if (page === totalPages) {
+            nextBtn.innerHTML = `<span>Submit</span>`;
+            nextBtn.removeEventListener("click", nextClick);
+            nextBtn.addEventListener("click", submitForm);
+        } else {
+            nextBtn.innerHTML = `<span>Next</span>`;
+            nextBtn.removeEventListener("click", submitForm);
+            nextBtn.addEventListener("click", nextClick);
+        }
     }
 
-    function changePage(step) {
-        if (currentPage + step >= 1 && currentPage + step <= totalPages) {
-            currentPage += step;
+    function validateForm() {
+        let currentForm = document.querySelector(`.form-page:nth-child(${currentPage})`);
+        let inputs = currentForm.querySelectorAll("input, select, textarea");
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (input.hasAttribute("required") && !input.value) {
+                isValid = false;
+                input.classList.add("border-danger");
+            } else {
+                input.classList.remove("border-danger");
+            }
+        });
+
+        if (!isValid) {
+            alert("모든 필수 입력 항목을 입력해주세요.");
+        }
+
+        return isValid;
+    }
+
+    function nextClick(event) {
+        event.preventDefault();
+
+        if (currentPage === 1 && !validateUserInfo()) {
+            return;
+        }
+        if (!validateForm()) {
+            return;
+        }
+
+        if (startTime === null) {
+            startTime = Date.now();
+        }
+        nextTimes.push(Date.now() - startTime);
+        console.log("Next 버튼 클릭 시간 (ms):", nextTimes);
+
+        // ✅ 특정 페이지 목록(blackScreenPages)에 포함된 경우 검정 화면 실행
+        if (blackScreenPages.has(currentPage)) {
+            showBlackScreen(() => {
+                currentPage += 1;
+                showPage(currentPage);
+            });
+        } else {
+            currentPage += 1;
             showPage(currentPage);
         }
+    }
+
+    function submitForm(event) {
+        event.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
+
+        document.getElementById("nextTimesInput").value = JSON.stringify(nextTimes);
+        document.getElementById("mainForm").submit();
+    }
+
+    function showBlackScreen(callback) {
+        // 검정 화면 추가
+        let blackScreen = document.createElement("div");
+        blackScreen.id = "black-screen";
+        blackScreen.style.position = "fixed";
+        blackScreen.style.top = "0";
+        blackScreen.style.left = "0";
+        blackScreen.style.width = "100%";
+        blackScreen.style.height = "100vh";
+        blackScreen.style.backgroundColor = "black";
+        blackScreen.style.zIndex = "9999";
+        blackScreen.style.display = "flex";
+        blackScreen.style.alignItems = "center";
+        blackScreen.style.justifyContent = "center";
+        blackScreen.style.color = "white";
+        blackScreen.innerHTML = "●</h2>";
+
+        document.body.appendChild(blackScreen);
+
+        // Next 버튼 비활성화
+        document.getElementById("next-btn").style.display = "none";
+
+        setTimeout(() => {
+            // 검정 화면 제거
+            document.body.removeChild(blackScreen);
+            // Next 버튼 다시 활성화
+            document.getElementById("next-btn").style.display = "inline-block";
+
+            // 콜백 실행 (다음 페이지로 이동)
+            callback();
+        }, 20000); // 20초 후 실행
     }
 
     window.onload = () => showPage(currentPage);
 </script>
 
-<div id="form-container">
-    <form class="form-page" style="display: none;">
-        <h4>폼 1</h4>
-        <form>
-            <!-- Youtube -->
-            <div class="ratio ratio-16x9">
-                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/W5Yst1Si3fw" width="560"
-                    height="315" allowfullscreen>
-                </iframe>
-            </div>
 
-            {% set questions = ["얼마나 행복했냐?", "얼마나 흥분했냐?", "얼마나 지배적이냐?"] %}
+<form id="mainForm" action="/submit" method="POST">
+    <div id="form-container">
+        <div class="form-page" style="display: none;">
+            <h4>응답자 정보</h4>
+            {% include "user_info.html" %}
+        </div>
+        <!-- <div class="form-page" style="display: none;">
+            <h4>자기 평가</h4>
+        </div> -->
+        {% set video_links = [
+        "https://www.youtube.com/embed/WWlDa7CA_5w?si=sMrJX30M6i9BFhcF",
+        "https://www.youtube.com/embed/IUN664s7N-c?si=2DyZo1rmq0SxNPzM",
+        "https://www.youtube.com/embed/AqzEHzZQ6-c?si=YiLaL8CnJQy5NaiV",
+        "https://www.youtube.com/embed/N5qYkWzx0rY?si=kflktf99QF7XE0Ny",
+        "https://www.youtube.com/embed/fCwb7KkEx58?si=08tnTnAqiRgfoAEv",
+        "https://www.youtube.com/embed/p-MQU1Qea1Y?si=cBeBojwSNaPwD483",
+        "https://www.youtube.com/embed/Pbdjrpx8h_M?si=mP8mrjCxZK4XW-14",
+        "https://www.youtube.com/embed/jfqj7Qs-9Is?si=MjyDWsfVGibUyo47",
+        "https://www.youtube.com/embed/0kJN84x4r9c?si=NxyykXryIqx_bdEO",
+        "https://www.youtube.com/embed/tyTZ_qqoKpM?si=1LUuTEqMTA7Kw_z3"
+        ] %}
 
-            {% for j in range(questions|length) %}
-            <div class="mb-3">
-                <p><strong>{{ j+1 }}. {{ questions[j] }}</strong></p>
-                <div class="d-flex justify-content-center">
-                    {% for i in range(1, 10) %}
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="sam_scale_{{ j }}" id="sam{{ j }}_{{ i }}"
-                            value="{{ i }}">
-                        <label class="form-check-label" for="sam{{ j }}_{{ i }}">{{ i }}</label>
-                    </div>
-                    {% endfor %}
+        {% for video_url in video_links %}
+        <div class="form-page" style="display: none;">
+            <h4>감정 평가</h4>
+            <div class="card m-5 p-3">
+                <p>영화 {{ loop.index }}</p>
+                <p>전체화면으로 봐주세요!</p>
+                <div class="ratio ratio-16x9" style="max-width: 600px; height: 300px;">
+                    <iframe src="{{ video_url }}" title="YouTube video player"
+                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation"
+                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; 
+                        encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                    </iframe>
                 </div>
             </div>
-            {% endfor %}
-        </form>
-    </form>
-    <form class="form-page" style="display: none;">
-        <h4>폼 2</h4>
-        {% include "basbis.html" %}
-    </form>
-    <form class="form-page" style="display: none;">
-        <h4>폼 3</h4>
-        <select class="form-control mb-3">
-            <option>옵션 1</option>
-            <option>옵션 2</option>
-            <option>옵션 3</option>
-        </select>
-    </form>
-    <form class="form-page" style="display: none;">
-        <h4>폼 4</h4>
-        <input type="password" class="form-control mb-3" placeholder="비밀번호 입력">
-        <input type="password" class="form-control mb-3" placeholder="비밀번호 확인">
-    </form>
-    <form class="form-page" style="display: none;">
-        <h4>폼 5</h4>
-        <textarea class="form-control mb-3" placeholder="추가 의견"></textarea>
-    </form>
-</div>
+        </div>
 
-<nav aria-label="pagination" class="mt-3">
-    <ul class="list-inline d-flex justify-content-between">
-        <li class="list-inline-item">
-            <button id="prev-btn" class="btn btn-dark btn-sm rounded-pill px-4 disabled" onclick="changePage(-1)"
-                type="button">
-                <i class="fi fi-arrow-start smaller"></i>
-                <span>Prev</span>
-            </button>
-        </li>
-        <li class="list-inline-item d-none d-lg-block">
-            <span id="page-indicator" class="btn btn-sm text-gray-500">1 / 5</span>
-        </li>
-        <li class="list-inline-item">
-            <button id="next-btn" class="btn btn-dark btn-sm rounded-pill px-4" onclick="changePage(1)" type="button">
-                <span>Next</span>
-                <i class="fi fi-arrow-end smaller"></i>
-            </button>
-        </li>
-    </ul>
-</nav>
+        <!-- 📋 설문지 폼 -->
+        <div class="form-page" style="display: none;">
+            <h4>감정 평가</h4>
+            <p>설문지{{ loop.index }}</p>
+            {% include "movie.html" %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 숨겨진 input 필드 (Next 버튼 클릭 시간 저장) -->
+    <input type="hidden" name="next_times" id="nextTimesInput">
+
+    <nav aria-label="pagination" class="mt-3">
+        <ul class="list-inline d-flex justify-content-between">
+            <li class="list-inline-item">
+                <button id="prev-btn" class="btn btn-dark btn-sm rounded-pill px-4 disabled" type="button">Prev</button>
+            </li>
+            <li class="list-inline-item d-none d-lg-block">
+                <span id="page-indicator" class="btn btn-sm text-gray-500">1 / 3</span>
+            </li>
+            <li class="list-inline-item">
+                <button id="next-btn" class="btn btn-dark btn-sm rounded-pill px-4" type="button">Next</button>
+            </li>
+        </ul>
+    </nav>
+</form>
+
 
 {% endblock %}

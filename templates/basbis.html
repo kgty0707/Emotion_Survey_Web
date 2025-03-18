@@ -21,20 +21,31 @@
 "나는 재미있다는 이유 하나만으로 이런저런 일들을 종종 할 것이다."
 ] %}
 
-{% for group_start in range(0, questions|length, 4) %}
-<div class="question-group">
-    {% for j in range(group_start, group_start + 4) if j < questions|length %} <div class="mb-3">
-        <p><strong>{{ j+1 }}. {{ questions[j] }}</strong></p>
-        <div class="d-flex justify-content-center">
-            {% for i in range(1, 5) %} <!-- 1~4까지 라디오 버튼 -->
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="sam_scale_{{ j }}" id="sam{{ j }}_{{ i }}"
-                    value="{{ i }}">
-                <label class="form-check-label" for="sam{{ j }}_{{ i }}">{{ i }}</label>
+<div class="card m-5 p-3">
+    {% for group_start in range(0, questions|length, 4) %}
+    <div class="question-group">
+        {% for j in range(group_start, group_start + 4) if j < questions|length %} <div class="mb-3">
+            <p><strong>{{ j+1 }}. {{ questions[j] }}</strong></p>
+            <div class="d-flex justify-content-start align-items-center">
+                <!-- 왼쪽 설명: 매우 동의하지 않음 -->
+                <span class="me-2">매우 동의하지 않음</span>
+
+                <!-- 라디오 버튼 -->
+                <div class="d-flex">
+                    {% for i in range(1, 5) %} <!-- 1~4까지 라디오 버튼 -->
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="sam_scale_{{ j }}" id="sam{{ j }}_{{ i }}"
+                            value="{{ i }}">
+                        <label class="form-check-label" for="sam{{ j }}_{{ i }}">{{ i }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 오른쪽 설명: 매우 동의 -->
+                <span class="ms-2 p-2">매우 동의</span>
             </div>
-            {% endfor %}
-        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endfor %}
 </div>
-{% endfor %}
